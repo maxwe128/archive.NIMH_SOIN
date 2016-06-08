@@ -1,0 +1,7 @@
+###Run MVM example
+
+
+
+#Make Data Table
+#
+for i in $(cut -d "," shaneVBMsubs_WSTDDUP.deminfo.csv -f1);do age=$(grep $i shaneVBMsubs_WSTDDUP.deminfo.csv | cut -d "," -f3);sex=$(grep $i shaneVBMsubs_WSTDDUP.deminfo.csv | cut -d "," -f4);name=$(echo $i);data=$(echo /data/elliottml/ANTSstructs/template.n16WSTD/bagehot_celtic/antsCT.n13WSTDDUP.stripInit.CorticalThicknessNormalizedToTemplate_smooth10mm.nii.gz);tempVol=$(cat /data/elliottml/ANTSstructs/template.n16WSTD/$i/antsCT.n13WSTDDUP.stripInit.brainvols.csv | tail -n1 | cut -d "," -f2);vol=$(printf '%.0f' $tempVol);echo $name $age $sex $vol $data;done

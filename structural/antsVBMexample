@@ -1,0 +1,6 @@
+###Ants VBM pipeline example
+#after antsCorticalThickness is run 
+
+antsApplyTransforms -d 3 -i antsCT.n13WSTDDUP.stripInit.BrainSegmentationPosteriors2.nii.gz -o testGMwarp2template.nii.gz -r /helix/data/ANTSstructs/antsInitFiles/WS_TD_DUP.n13matchedtemplateStrip.nii.gz -t antsCT.n13WSTDDUP.stripInit.SubjectToTemplate0GenericAffine.mat antsCT.n13WSTDDUP.stripInit.SubjectToTemplate1Warp.nii.gz
+
+Then use warped gm images in 3dttest

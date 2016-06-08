@@ -1,0 +1,87 @@
+#! /bin/tcsh
+
+#USAGE
+if($#argv < 2) then
+	echo ''
+	echo 'Calculation of an eta^2 matrix for covariance data.'
+	echo ''
+	echo 'USAGE: '
+	echo ''
+	echo 'calculate_eta2_matrix ${mask} ${data}'
+	echo ''
+	echo '     ~${name}~ ~${graymask}~ ~${intermed_files}~ '
+	echo ''
+	echo '~${arguments}~ are OPTIONAL, and have reasonable defaults'
+	echo ''
+	echo '-----------------------------------------------------------------------------'
+	echo ''
+	echo 'REQUIRED VARIABLES'
+	echo ''
+	echo 'Mask - mask of your ROI in the same resolution as the dataset'
+	echo '     - NOTE: splits the mask by hemisphere before calculation'
+	echo ''
+	echo 'Data - concatenated volume of preprocessed gray-matter data'
+	echo ''
+	echo '-----------------------------------------------------------------------------'
+	echo ''
+	echo 'OPTIONAL VARIABLES'
+	echo ''
+	echo 'Name     - customized name to append to each output file'
+	echo '         - defaults to a combination of CLUST with a randomized number tag'
+	echo ''
+	echo 'Graymask - whole-brain gray matter mask including the ROI'
+	echo '         - default: /x/wmn14/turnernl/CLUSTERING/masks/graymask90_sibs_rh_under55_n286_MNI_4mm.1D.dset'
+	echo ''
+	echo 'Intermed_files - whether or not to save the intermediate files'
+	echo '               - default: true'
+	echo '-----------------------------------------------------------------------------'
+	exit 0
+endif
+
+# ROI mask
+set mask = $1
+# 4d Volume, volume by subject
+set data = $2
+# Output filename
+set name = $3
+@ intermed_files = 1
+echo $*
+#=======================================================================
+# Argument Defaults
+# Output filename
+if($name == "")then
+	set rand = `bash -c 'echo $RANDOM'`
+	set name = ETA_rand${rand}
+endif
+
+#Saving intermediate files by default
+if(${intermed_files} == "") then
+	@ intermed_files = 1
+endif
+
+#=======================================================================
+#CONSTANTS
+#Intermediate filenames without extension
+set corr_name = ${name}_corr
+set masked_corr_name = ${name}_corr_gray
+set eta2_name = ${name}_eta2
+set final_brik_name = ${name}_solutions
+
+#FULL Expected filenames - with file extension
+set full_corr_name = ${corr_name}.1D.dset
+set full_masked_corr_name = ${masked_corr_name}.1D.dset
+set full_eta2_name = ${eta2_name}.txt
+
+#=======================================================================
+#Making...
+
+echo
+echo 'Determining Pearson Correlation Maps...'
+# Pearson Correlation Maps
+3dAutoTcorrelate -pearson -mask ${mask} -mask_only_targets -prefix ${corr_name}.1D.dset $data
+
+
+echo
+echo 'Calculating Eta^2...'
+# Calculating Eta^2
+3ddot -doeta2 -full ${full_corr_name} >! ${full_eta2_name}

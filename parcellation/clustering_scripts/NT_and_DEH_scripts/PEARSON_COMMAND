@@ -1,0 +1,1 @@
+3dAutoTcorrelate -pearson -mask LEFT_bilateral_IPS_mask_4mm_gray80_MNI.nii.gz -mask_only_targets -prefix /x/wmc3/skippenhan/limk1_sibstudy/dartel_n286_righties_under55/SMOOTH6/sib_gmv_n286_4mm.nii.gz 

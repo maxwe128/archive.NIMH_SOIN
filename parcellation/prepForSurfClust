@@ -1,0 +1,17 @@
+#!/bin/bash
+list=$1
+outDir=$2 #include prefix for output
+subDir=$3
+cd $subDir
+for i in $(cat $list);do
+	cd $i/SUMA
+	ConvertDset -add_node_index -o_1Dp -input std.60.lh.thickness.niml.dset -prefix std.60.lh.thickness
+	ConvertDset -add_node_index -o_1Dp -input std.60.rh.thickness.niml.dset -prefix std.60.rh.thickness
+	cat std.60.lh.thickness.1D.dset std.60.rh.thickness.1D.dset >std.60.both_forLHmask.thickness.1D.dset
+	cat std.60.lh.thickness.1D.dset std.60.rh.thickness.1D.dset >std.60.both_forRHmask.thickness.1D.dset
+	cd $subDir
+	echo $i
+done
+cd $subDir
+3dTcat -prefix $outDir_forLHmask $subDir/*/SUMA/std.60.both_forLHmask.thickness.1D.dset
+3dTcat -prefix $outDir_forRHmask */SUMA/std.60.both_forRHmask.thickness.1D.dset

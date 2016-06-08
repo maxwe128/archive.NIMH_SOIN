@@ -1,0 +1,29 @@
+#!/bin/bash
+eta_filename=$1
+ROI_filename=$2
+filename=$3
+hemi=$4
+num_attempts=500
+half=$(( $(less $ROI_filename | wc -l) /2))
+cp $eta_filename tmp_eta
+
+if [ $hemi == lh ];then
+	head -n$half $ROI_filename > tmp_ROI
+	
+elif [ $hemi == rh ];then
+	tail -n$half $ROI_filename > tmp_ROI
+else
+	echo "bad hemi input, must either be lh or rh"
+fi
+
+matlab -nojvm -nodisplay -nosplash <<EOF
+        scripts_dir = '/data/elliottml/Clustering/scripts/';
+        addpath(scripts_dir);
+        struct_spectral_clustering_surf('tmp_eta','tmp_ROI',15,'tmp_674563',1);
+EOF
+mv tmp_674563_spectral_solutions ${filename}_spectral_solutions
+mv tmp_674563_K15.1D.dset ${filename}.1D.dset
+rm tmp*
+rm spectral*.DATA
+rm spectral*.CENTER
+rm spectral.MDL

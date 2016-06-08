@@ -1,0 +1,97 @@
+**************************************************************************
+* Matlab source codes for the paper                                      *
+* A. K. Qin and P. N. Suganthan, ¡°Robust growing neural gas algorithm    *
+* with application in cluster analysis¡±, Neural Networks special issue   *
+* on Recent Developments in Self-Organizing Systems, vol. 17 (8-9),      *
+* pp. 1135-1148, 2004.                                                   *
+* Author: Anderson, Kai QIN (http://WWW.ntu.edu.sg/home5/pg06039484)     *
+*      Nanyang Technological University, School of EEE                   *
+* Released 0n 25 JAN 2005                                                *
+**************************************************************************
+
+The matlab functions implement the methods presented in the paper 
+A. K. Qin and P. N. Suganthan, "Robust growing neural gas algorithm with application 
+in cluster analysis", Neural Networks special issue on Recent Developments in 
+Self-Organizing Systems, vol. 17 (8-9), pp. 1135-1148, 2004.
+
+[Usages:]
+1. The codes in directory RGNG implement the Robust Growing Neural Gas Algorithm (RGNG)
+1.1 Codes in directory "artifical" deals with two artifical datasets D1 and D2 presented in the paper
+   Example:
+   [result]=RGNGrun(dataset,inicenter,realcenter,noisenum,prenode);
+   Perform RGNG algorithm on the provided dataset. Here user should provide the initial cluster centers 
+   and real cluster centers to calculate some performance measures, also we provide the noise number in
+   order to calculate some performance measures.User should define the maximum number of prototypes for the 
+   RGNG to grow.
+   
+   Usage: [result]=RGNGrun(TXoutlier84,Vd1(:,:,1),mean_var(1:2,:)',84,20); for noisy data
+          [result]=RGNGrun(X,Vd1(:,:,1),mean_var(1:2,:)',0,10); for clean data
+         
+   1.2 Codes in directory "real" deals with UCI wine dataset presented in the paper
+   Example:
+   [result]=RGNGrunreal(dataset,inicenter,noisenum,prenode);
+    Perform RGNG algorithm on the provided dataset. Here we provide the initial cluster centers 
+   and the noise number in order to calculate some performance measures.User should define the 
+   maximum number of prototypes for the RGNG to grow.
+   
+   Usage: [result]=RGNGrunreal(twinedata,Vwine(:,:,1),2,10); for noisy data
+          [result]=RGNGrunreal(winedata,Vwine(:,:,1),0,10); for clean data
+  
+
+2. The codes in directory GNG implement the Growing Neural Gas Algorithm with MDL (GNG-M)
+   2.1 Codes in directory "artifical" deals with two artifical datasets D1 and D2 presented in the paper
+   Example:
+   [result]=GNGrun(dataset,inicenter,realcenter,noisenum,prenode);
+   Perform GNG algorithm on the provided dataset. Here user should provide the initial cluster centers 
+   and real cluster centers to calculate some performance measures, also we provide the noise number in
+   order to calculate some performance measures.User should define the maximum number of prototypes 
+   for the GNG-M to grow.
+   
+   Usage: [result]=GNGrun(TXoutlier84,Vd1(:,:,1),mean_var(1:2,:)',84,20); for noisy data
+          [result]=GNGrun(X,Vd1(:,:,1),mean_var(1:2,:)',0,10); for clean data
+         
+   2.2 Codes in directory "real" deals with UCI wine dataset presented in the paper
+   Example:
+   [result]=GNGrunreal(dataset,inicenter,noisenum,prenode);
+    Perform GNG algorithm on the provided dataset. Here we provide the initial cluster centers 
+   and the noise number in order to calculate some performance measures.User should define the 
+   maximum number of prototypes for the GNG-M to grow.
+   
+   Usage: [result]=GNGrunreal(twinedata,Vwine(:,:,1),2,10); for noisy data
+          [result]=GNGrunreal(winedata,Vwine(:,:,1),0,10); for clean data
+
+
+[Notes:]
+
+1. 
+The calculation of MDL values depends on parameters: data accuracy (yeta) & error balance 
+(ki). User should carefully choose them when dealing with real applications. For example, 
+for image quantization task, we could just choose the bits for representing a prototype or 
+outlier to be 16 or 24, etc. For the datasets we tested, we choose yeta=0.000005 and ki=1.2 
+(it is different from our paper and is better).
+
+2. 
+You can choose the number of training epochs for each growing stage by setting the parameter 
+"RGNG.epochspernode" in the file InitRGNG.m.
+
+3.
+Robustness can still be an issue on some difficult datasets. In these situations, the RGNG can be
+executed a few times and the median number of clusters can be chosen as the final cluster numbers.
+Please remember that we still employ gradient style methods.
+
+
+
+
+[Requests:]
+In all documents and papers that use these matlab codes, please 
+
+1. cite our paper:
+
+A. K. Qin and P. N. Suganthan, "Robust growing neural gas algorithm with application 
+in cluster analysis", Neural Networks special issue on Recent Developments in 
+Self-Organizing Systems, vol. 17 (8-9), pp. 1135-1148, 2004.
+
+2. If space permits, please acknowledge the usage of our codes in acknowledgement.
+
+
+Any comments and questions can be sent to qinkai@pmail.ntu.edu.sg or epnsugan@ntu.edu.sg

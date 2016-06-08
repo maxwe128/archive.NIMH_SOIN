@@ -1,0 +1,97 @@
+#! /bin/tcsh -f
+
+if($#argv == 0) then
+	echo ''
+	echo ''
+	echo 'USAGE: run_spectral_clustering ${eta_filename} ${mask_filename}'
+	echo ''
+	echo '     ~${num_clusters}~ ~${name}~ ~${num_attempts}'
+	echo ''
+	echo '~${arguments}~ are OPTIONAL, and have reasonable defaults'
+	echo '-----------------------------------------------------------------------------'
+	echo ''
+	echo 'REQUIRED ARGUMENTS'
+	echo ''
+	echo 'Eta_filename - eta^2 matrix'
+	echo ''
+	echo 'ROI_filename - matching ROI mask for voxels within the eta^2 matrix'
+	echo ''
+	echo '-----------------------------------------------------------------------------'
+	echo ''
+	echo 'OPTIONAL VARIABLES'
+	echo ''
+	echo 'Num_clusters - maximum number of k for cluster solutions'
+	echo ''
+	echo 'Name     - customized name to append to each output file'
+	echo '         - defaults to a combination of the current date and time'
+	echo ''
+	echo 'Num_attempts - how many clustering attempts to consolidate into results'
+	echo '             - NOT FULLY IMPLEMENTED YET'
+	echo ''
+	echo '-----------------------------------------------------------------------------'
+	exit 0
+endif
+
+#=======================================================================
+#Argument Handling
+
+#Input eta matrix
+set eta_filename = $1
+#Input ROI corresponding to eta matrix
+# (important for writing the results to a brain volume)
+set ROI_filename = $2
+#Largest k-value solution desired
+set num_clusters = $3
+#Output filename prefix
+set output_name = $4
+#NOT IMPLEMENTED YET
+set num_attempts = $5
+
+#=======================================================================
+#Constant - name of matlab function for clustering our data
+# 'struct' prefix is only a legacy
+set compiled_script = '/x/wmn14/turnernl/CLUSTERING/compiling_matlab/spectral_clustering/run_spectral_clustering.sh'
+set matlab_function_name = 'struct_spectral_clustering'
+set matlab_location = '/x/nimbus/usr/local/matlab_2012b'
+#=======================================================================
+#Default Arguments
+
+#num_clusters
+if(${num_clusters} == "") then
+	set num_clusters = 15
+endif
+
+#output_name
+if(${output_name} == "")then
+	set output_name = `date +%m%d%y_%H%M%S_`
+endif
+
+#num_attempts
+if(${num_attempts} == "")then
+	set num_attempts = 100
+endif
+#=======================================================================
+
+#running the compiled version of the spectral clustering function
+# Currently not working for some reason
+# echo "running ${compiled_script} ${matlab_location} ${eta_filename} ${ROI_filename} ${num_clusters} ${output_name} ${num_attempts}"
+ 
+# ${compiled_script} ${matlab_location} ${eta_filename} ${ROI_filename} ${num_clusters} ${output_name} ${num_attempts}
+#Instead running the script through matlab the old way
+set matlab_string = `make_matlab_string.py ${matlab_function_name} ${eta_filename} ${ROI_filename} ${num_clusters} ${output_name} ${num_attempts}`
+
+echo "Running matlab with string: ${matlab_string}"
+matlab -nodiisplay -r "${matlab_string}"
+
+#concatenating all the output volumes into a single file
+concat_numbered_volumes "${output_name}_" "+tlrc.HEAD" 2
+# Removing training underscore
+mv ${output_name}_.nii.gz ${output_name}.nii.gz
+
+#hack for formatting
+if(-e spectral.MDL) then
+	mv spectral.MDL ${output_name}_spectral.MDL
+endif
+
+#removing single-solution volumes
+/bin/rm ${output_name}_[0-9]*

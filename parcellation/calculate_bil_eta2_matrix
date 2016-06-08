@@ -1,0 +1,92 @@
+#! /bin/tcsh
+
+#USAGE
+if($#argv < 2) then
+	echo ''
+	echo 'Calculation of an eta^2 matrix for covariance data.'
+	echo 'Splits the data into two hemispheres before calculation'
+	echo ''
+	echo 'USAGE: '
+	echo ''
+	echo 'calculate_bil_eta2_matrix ${mask} ${data}'
+	echo ''
+	echo '     ~${name}~ ~${graymask}~ ~${intermed_files}~ '
+	echo ''
+	echo '~${arguments}~ are OPTIONAL, and have reasonable defaults'
+	echo ''
+	echo '-----------------------------------------------------------------------------'
+	echo ''
+	echo 'REQUIRED VARIABLES'
+	echo ''
+	echo 'Mask - mask of your ROI in the same resolution as the dataset'
+	echo '     - NOTE: splits the mask by hemisphere before calculation'
+	echo ''
+	echo 'Data - concatenated volume of preprocessed gray-matter data'
+	echo ''
+	echo '-----------------------------------------------------------------------------'
+	echo ''
+	echo 'OPTIONAL VARIABLES'
+	echo ''
+	echo 'Name     - customized name to append to each output file'
+	echo '         - defaults to a combination of CLUST with a randomized number tag'
+	echo ''
+	echo 'Graymask - whole-brain gray matter mask including the ROI'
+	echo '         - default: /x/wmn14/turnernl/CLUSTERING/masks/graymask90_sibs_rh_under55_n286_MNI_4mm.nii.gz'
+	echo ''
+	echo 'Intermed_files - whether or not to save the intermediate files'
+	echo '               - default: true'
+	echo '-----------------------------------------------------------------------------'
+	exit 0
+endif
+
+# ROI mask
+set mask = $1
+# 4d Volume, volume by subject
+set data = $2
+# Output filename
+set name = $3
+# Gray matter mask
+set graymask = $4
+# Whether or not to keep intermediate files
+set intermed_files = $5
+
+
+
+echo $*
+#=======================================================================
+# Argument Defaults
+# Output filename
+if($name == "")then
+	set rand = `bash -c 'echo $RANDOM'`
+	set name = ETA_rand${rand}
+endif
+
+#Default gray matter mask
+if(${graymask} == "")then
+	set graymask = "/x/wmn14/turnernl/CLUSTERING/masks/graymask90_sibs_rh_under55_n286_MNI_4mm.nii.gz"
+endif
+
+#Saving intermediate files by default
+if(${intermed_files} == "") then
+	@ intermed_files = 1
+endif
+
+#=======================================================================
+#Defining name of new masks
+set mask_name = $mask:t
+set left_mask_name = LEFT_${mask_name}
+set right_mask_name = RIGHT_${mask_name}
+
+echo
+echo 'Splitting mask into hemispheres'
+#Making hemisphere split masks
+3dcalc -a $mask -prefix ${left_mask_name} -expr 'a*ispositive(x)'
+3dcalc -a $mask -prefix ${right_mask_name} -expr 'a*not(ispositive(x))'
+
+echo
+echo 'Performing Eta calculation for each side'
+echo 'left...'
+calculate_eta2_matrix ${left_mask_name} ${data} left_${name} ${graymask} ${intermed_files}
+
+echo 'right...'
+calculate_eta2_matrix ${right_mask_name} ${data} right_${name} ${graymask} ${intermed_files}

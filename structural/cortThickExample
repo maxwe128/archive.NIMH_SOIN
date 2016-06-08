@@ -1,0 +1,15 @@
+###Warp struct to template
+antsRegistrationSyN.sh -d 3 -f WS_TD_n18matchedtemplate_MNI.nii.gz -m anat.20121212.03843.7.nii.gz -t r -o anat.20121212.AlgnWSTDn18_MNI
+#run cort thickness with aligned sub scan and a -f brainExtraction mask for the template (seems too help brain extraction)
+antsCorticalThickness.sh -d 3 -a anat.20121212.AlgnWSTDn18_MNIWarped.nii.gz -e WS_TD_n18matchedtemplate_MNI.nii.gz -m n18.WSTDtemplateBrainProbabilityMask.nii.gz -p n18.WSTDtemplateBrainSegmentationPosteriors%d.nii.gz -f WS_TD_n18matchedBrainMask_MNI.nii.gz -t WS_TD_n18matchedstrip_MNI.nii.gz -o anat.20121212.Warped2MNIFirst
+
+
+
+####New option, align both anatomical and stripped anatomical in step 1, then rename stripped to be the output of antsCorticalThickness brain extraction step and make the brainMask using 3dcalc. AntsCT will then skip over brain extraction and use yours that you are more confident in.
+
+##Method for aligning both template and stripped to MNI then renaming so that antsCorticalThickness skips over brain extraction and uses yours
+for i in $(ls -d *);do echo "export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=8;cd /data/elliottml/ANTSstructs/template.n16WSTD/${i};antsRegistrationSyN.sh -d 3 -f /data/elliottml/ANTSstructs/antsInitFiles/WS_TD_n18matchedtemplate_MNI.nii.gz -m ${i}_avg.nii.gz -t r -o ${i}_avg.AlngWSTDn18.;antsRegistrationSyN.sh -d 3 -f /data/elliottml/ANTSstructs/antsInitFiles/WS_TD_n18matchedstrip_MNI.nii.gz -m strip.${i}_avg_masked.nii.gz -t r -o strip.${i}_avg.AlngWSTDn18.;mv strip.${i}_avg.AlngWSTDn18.Warped.nii.gz ${i}_avg.n18WSTD.cortThick.BrainExtractionBrain.nii.gz;3dcalc -a ${i}_avg.n18WSTD.cortThick.BrainExtractionBrain.nii.gz -expr 'ispositive(a)' -prefix ${i}_avg.n18WSTD.cortThick.BrainExtractionMask.nii.gz;antsCorticalThickness.sh -d 3 -a ${i}_avg.AlngWSTDn18.Warped.nii.gz -e /data/elliottml/ANTSstructs/antsInitFiles/WS_TD_n18matchedtemplate_MNI.nii.gz -m /data/elliottml/ANTSstructs/antsInitFiles/n18.WSTDtemplateBrainProbabilityMask.nii.gz -p /data/elliottml/ANTSstructs/antsInitFiles/n18.WSTDtemplateBrainSegmentationPosteriors%d.nii.gz -f /data/elliottml/ANTSstructs/antsInitFiles/WS_TD_n18matchedBrainMask_MNI.nii.gz -t /data/elliottml/ANTSstructs/antsInitFiles/WS_TD_n18matchedstrip_MNI.nii.gz -o ${i}_avg.n18WSTD.cortThick." >> /data/elliottml/ANTSstructs/lists/swarm/swarm.antsCTn18WSTDavg; done
+
+
+###Newest method that works best
+#use prestripped brain and allow entire pipeline to run including stripping
