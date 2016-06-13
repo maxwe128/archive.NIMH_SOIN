@@ -1,0 +1,15 @@
+#! /bin/bash
+
+dataDir=/x/ltm7/PETBANKS/spm5.pet.prep_raced.v2_NEW.1st.level/
+cd $dataDir
+subs=$(ls -d R*)
+mask=/x/wmn18/elliottml/GraphTheoryAnalyses/PET_MNI_N27_EZ_ML.nii
+LOG=/x/wmn18/elliottml/GraphTheoryAnalyses/Log.getPETData
+date >> $LOG
+
+for sub in $subs;do
+    ln -s ${dataDir}${sub}/SMOOTH_10/*rst-avg_${sub}_swMSrBFZ.img /x/wmn18/elliottml/GraphTheoryAnalyses/data/codedPetWater/AllControls
+ln -s ${dataDir}${sub}/SMOOTH_10/*rst-avg_${sub}_swMSrBFZ.hdr /x/wmn18/elliottml/GraphTheoryAnalyses/data/codedPetWater/AllControls
+3dROIstats -mask $mask ${dataDir}${sub}/SMOOTH_10/*rst-avg_${sub}_swMSrBFZ.hdr > /x/wmn18/elliottml/GraphTheoryAnalyses/data/codedPetWater/${sub}"_rst-avg.txt"
+done
+

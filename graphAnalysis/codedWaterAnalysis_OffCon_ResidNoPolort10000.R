@@ -1,0 +1,5 @@
+###Analysis with residuals but without using polort1 in 3dDetrend, probably isnt useful
+codedWater_offConGroupResid10000<-Calculate_GraphTheory(dataList = "/x/wmn18/elliottml/GraphTheoryAnalyses/codedWaterAnalysis/offConGroupResidList",nEdgesOrThreshold = getEdgesFromPercent(8:49,116),analysisType = "group",comparison = T,threshType = "positive",edgeType = "partial",structuralData = T,numberPermutations = 10000,brainWide = T,pairedPerm=F,outputDirectory = "/x/wmn18/elliottml/GraphTheoryAnalyses/codedWaterAnalysis/offConGroupResidWD/")saveRDS(group1IgraphMeasures,"/x/wmn18/elliottml/GraphTheoryAnalyses/codedWaterAnalysis/savedObjects/codedWater_offCon_GroupResidAgeSexNoPolort_10000_On")
+saveRDS(group1IgraphMeasures,"/x/wmn18/elliottml/GraphTheoryAnalyses/codedWaterAnalysis/savedObjects/codedWater_offCon_GroupResidAgeSexNoPolort_10000_Off")
+saveRDS(group2IgraphMeasures,"/x/wmn18/elliottml/GraphTheoryAnalyses/codedWaterAnalysis/savedObjects/codedWater_offCon_GroupResidAgeSexNoPolort_10000_Con")
+saveRDS(codedWater_onConGroupResid10000,"/x/wmn18/elliottml/GraphTheoryAnalyses/codedWaterAnalysis/savedObjects/codedWater_offCon_GroupResidAgeSexNoPolort_10000")

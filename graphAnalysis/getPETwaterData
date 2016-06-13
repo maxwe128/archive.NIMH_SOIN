@@ -1,0 +1,14 @@
+#! /bin/bash
+#   08/25/14
+#This script grabs all PET Water Rest scans from each subject, creates a matrix with their raw data averaged into bins by a mask, then computes the correlational matrix between all values in each mask.
+
+dataDir=/x/ltm7/PETBANKS/spm5.pet.prep_raced.v2_NEW.1st.level/
+cd $dataDir
+subs=$(ls -d R*)
+mask=/x/wmn21/elliottml/GraphTheoryAnalyses/PET_MNI_N27_EZ_ML.nii
+LOG=/x/wmn21/elliottml/BCT/Log.getPETData
+outPutFile=/x/wmn21/elliottml/GraphTheoryAnalyses/data/PETWaterRest/rawData_PETWaterAVGs.txt
+
+for sub in $subs;do
+    3dROIstats -mask $mask -quiet ${dataDir}${sub}/SMOOTH_10/rst-avg_${sub}_swMSrBFZ.hdr >> $outPutFile
+done

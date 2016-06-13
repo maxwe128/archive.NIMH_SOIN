@@ -1,0 +1,12 @@
+#! /bin/bash
+
+dataDir=/x/ltm7/PETBANKS/spm5.pet.prep_raced.v2_NEW.1st.level/
+cd $dataDir
+subs=$(ls -d R*)
+mask=/x/wmn21/elliottml/GraphTheoryAnalyses/PET_MNI_N27_EZ_ML.nii
+LOG=/x/wmn21/elliottml/GraphTheoryAnalyses/Log.getPETData
+date >> $LOG
+
+for sub in $subs;do
+    ln -s ${dataDir}${sub}/SMOOTH_10/swMSrBFZ${sub}*bk* /x/wmn21/elliottml/GraphTheoryAnalyses/data/rawData/ 
+done
