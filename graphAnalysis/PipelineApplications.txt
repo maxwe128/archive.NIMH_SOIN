@@ -1,7 +1,0 @@
-1) replication of PET water nback findings
-2) investigation of medication effects in R-fMRI****
-3) Longitudinal study of changes in graph metrics in development
-	a) with puberty data
-	b) with Williams data
-4) Task based analysis of changes in metrics over task relevant time periods and how this varies in SZ
-5) Dynamic Graph Analysis, sliding window calculations across resting state time series to get measure of variability. Could correlate with ICA components or some other network measure
